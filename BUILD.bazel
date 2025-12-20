@@ -56,3 +56,24 @@ alias(
     actual = ":z3_dynamic",
     visibility = ["//visibility:public"],
 )
+
+# WASM build using wasi-sdk
+cmake(
+    name = "z3_wasm",
+    generate_args = [
+        "-G Ninja",
+        "-D BUILD_SHARED_LIBS=OFF",
+        "-D Z3_BUILD_LIBZ3_SHARED=OFF",
+        "-D Z3_BUILD_EXECUTABLE=OFF",
+        "-D Z3_SINGLE_THREADED=ON",
+        "-D Z3_POLLING_TIMER=ON",
+        "-D Z3_BUILD_PYTHON_BINDINGS=OFF",
+        "-D Z3_BUILD_JAVA_BINDINGS=OFF",
+        "-D Z3_BUILD_DOTNET_BINDINGS=OFF",
+        "-D CMAKE_TOOLCHAIN_FILE=cmake/wasi-sdk.cmake",
+    ],
+    lib_source = ":all_files",
+    out_static_libs = ["libz3.a"],
+    targets = ["libz3"],
+    visibility = ["//visibility:public"],
+)

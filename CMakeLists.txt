@@ -296,9 +296,13 @@ endif()
 ################################################################################
 # Threading support
 ################################################################################
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads)
-list(APPEND Z3_DEPENDENT_LIBS Threads::Threads)
+if (NOT Z3_SINGLE_THREADED)
+  set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+  find_package(Threads)
+  list(APPEND Z3_DEPENDENT_LIBS Threads::Threads)
+else()
+  message(STATUS "Skipping threading support (Z3_SINGLE_THREADED=ON)")
+endif()
 
 ################################################################################
 # Compiler warnings
