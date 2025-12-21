@@ -20,13 +20,35 @@ Revision History:
 --*/
 
 #include "util/scoped_timer.h"
-#include "util/mutex.h"
 #include "util/util.h"
 #include "util/cancel_eh.h"
 #include "util/rlimit.h"
+#include <climits>
+
+#ifdef SINGLE_THREAD
+// Single-threaded build: use polling timer only, no threading support
+scoped_timer::scoped_timer(unsigned ms, event_handler * eh) {
+    if (ms == 0 || ms == UINT_MAX)
+        return;
+#ifdef POLLING_TIMER
+    auto* r = dynamic_cast<cancel_eh<reslimit>*>(eh);
+    if (r) {
+        r->t().set_timeout(ms);
+        r->set_auto_cancel();
+    }
+#endif
+}
+
+scoped_timer::~scoped_timer() {}
+void scoped_timer::initialize() {}
+void scoped_timer::finalize() {}
+void scoped_timer::init_state(unsigned, event_handler *) {}
+
+#else // Multi-threaded build
+
+#include "util/mutex.h"
 #include <atomic>
 #include <chrono>
-#include <climits>
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -105,7 +127,7 @@ scoped_timer::scoped_timer(unsigned ms, event_handler * eh) {
         s->cv.notify_one();
     }
 }
-    
+
 scoped_timer::~scoped_timer() {
     if (!s)
         return;
@@ -150,3 +172,5 @@ void scoped_timer::init_state(unsigned ms, event_handler * eh) {
     s->m_mutex.lock();
     s->work = WORKING;
 }
+
+#endif // SINGLE_THREAD

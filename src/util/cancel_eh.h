@@ -18,8 +18,7 @@ Revision History:
 --*/
 #pragma once
 
-#include <atomic>
-#include <mutex>
+#include "util/mutex.h"
 #include "util/event_handler.h"
 
 /**
@@ -27,8 +26,8 @@ Revision History:
 */
 template<typename T>
 class cancel_eh : public event_handler {
-    std::mutex m_mutex;
-    std::atomic<bool> m_canceled = false;
+    mutex m_mutex;
+    atomic<bool> m_canceled = false;
     bool m_auto_cancel = false;
     T & m_obj;
 public:
@@ -40,7 +39,7 @@ public:
     // before the cancel_eh destructor is invoked.
     // Thus, the only races are with itself and with the getters.
     void operator()(event_handler_caller_t caller_id) override {
-        std::lock_guard lock(m_mutex);
+        lock_guard lock(m_mutex);
         if (!m_canceled) {
             m_caller_id = caller_id;
             m_obj.inc_cancel();

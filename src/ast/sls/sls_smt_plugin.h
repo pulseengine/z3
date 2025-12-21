@@ -20,8 +20,10 @@ Author:
 #include "ast/sls/sls_context.h"
 #include "ast/sls/sat_ddfw.h"
 #include "util/statistics.h"
+#include "util/mutex.h"
+#ifndef SINGLE_THREAD
 #include <thread>
-#include <mutex>
+#endif
 
 namespace sls {
 
@@ -60,8 +62,10 @@ namespace sls {
         sls::context m_context;
         std::atomic<lbool> m_result;
         std::atomic<bool> m_completed, m_has_units;
+#ifndef SINGLE_THREAD
         std::thread m_thread;
-        std::mutex  m_mutex;
+#endif
+        mutex  m_mutex;
 
         unsigned m_value_smt2sls_delay = 0;
         unsigned m_value_smt2sls_delay_threshold = 50;

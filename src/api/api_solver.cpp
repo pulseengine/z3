@@ -16,7 +16,9 @@ Author:
 Revision History:
 
 --*/
+#ifndef SINGLE_THREAD
 #include<thread>
+#endif
 #include "util/scoped_ctrl_c.h"
 #include "util/cancel_eh.h"
 #include "util/file_path.h"
@@ -164,17 +166,21 @@ extern "C" {
 
 
     static void init_solver_log(Z3_context c, Z3_solver s) {
+#ifndef SINGLE_THREAD
         static std::thread::id g_thread_id = std::this_thread::get_id();
         static bool g_is_threaded = false;
+#endif
         solver_params sp(to_solver(s)->m_params);
         symbol smt2log = sp.smtlib2_log();
         if (smt2log.is_non_empty_string() && !to_solver(s)->m_pp) {
+#ifndef SINGLE_THREAD
             if (g_is_threaded || g_thread_id != std::this_thread::get_id()) {
                 g_is_threaded = true;
                 std::ostringstream strm;
                 strm << smt2log << '-' << std::this_thread::get_id();
                 smt2log = symbol(std::move(strm).str());
             }
+#endif
             to_solver(s)->m_pp = alloc(solver2smt2_pp, mk_c(c)->m(), smt2log.str());
         }
     }

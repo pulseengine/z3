@@ -16,7 +16,9 @@ Notes:
 
 --*/
 
+#ifndef SINGLE_THREAD
 #include<signal.h>
+#endif
 #include "util/tptr.h"
 #include "util/cancel_eh.h"
 #include "util/scoped_ctrl_c.h"

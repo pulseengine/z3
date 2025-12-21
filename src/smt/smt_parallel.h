@@ -19,6 +19,18 @@ Revision History:
 #pragma once
 
 #include "smt/smt_context.h"
+
+#ifdef SINGLE_THREAD
+// Stub for single-threaded builds - parallel solving is disabled
+namespace smt {
+    class parallel {
+    public:
+        parallel(context&) {}
+        lbool operator()(expr_ref_vector const&);
+    };
+}
+#else
+// Full parallel implementation
 #include "util/search_tree.h"
 #include <thread>
 #include <mutex>
@@ -172,3 +184,4 @@ namespace smt {
     };
 
 }
+#endif // SINGLE_THREAD

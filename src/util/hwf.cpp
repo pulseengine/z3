@@ -29,6 +29,20 @@ Revision History:
 #endif
 #else
 #include<fenv.h>
+// WASI only provides FE_TONEAREST - stub other rounding modes
+// These won't actually change hardware rounding (WASI doesn't support that),
+// but allow compilation. Z3's SMT solver uses software FP when precision matters.
+#if defined(__wasi__)
+#ifndef FE_UPWARD
+#define FE_UPWARD     0x0800
+#endif
+#ifndef FE_DOWNWARD
+#define FE_DOWNWARD   0x0400
+#endif
+#ifndef FE_TOWARDZERO
+#define FE_TOWARDZERO 0x0c00
+#endif
+#endif
 #endif
 
 #if defined(__x86_64__) || defined(_M_X64) ||    \

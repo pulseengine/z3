@@ -16,10 +16,26 @@ Author:
 Revision History:
 
 --*/
+#include "util/scoped_ctrl_c.h"
+
+#ifdef SINGLE_THREAD
+// Single-threaded build: no signal support (WASI doesn't have signals)
+#include "util/gparams.h"
+
+scoped_ctrl_c::scoped_ctrl_c(event_handler & eh, bool enabled):
+    m_cancel_eh(eh),
+    m_enabled(false) {
+    // In single-threaded mode, ctrl-c handling is disabled
+    (void)enabled;
+}
+
+scoped_ctrl_c::~scoped_ctrl_c() {}
+
+#else // Multi-threaded build with signal support
+
 #include <mutex>
 #include <vector>
 #include <signal.h>
-#include "util/scoped_ctrl_c.h"
 #include "util/gparams.h"
 
 static std::vector<scoped_ctrl_c*> g_list;
@@ -51,7 +67,7 @@ scoped_ctrl_c::scoped_ctrl_c(event_handler & eh, bool enabled):
     }
 }
 
-scoped_ctrl_c::~scoped_ctrl_c() { 
+scoped_ctrl_c::~scoped_ctrl_c() {
     if (m_enabled) {
         std::lock_guard lock(g_list_mutex);
         auto it = std::find(g_list.begin(), g_list.end(), this);
@@ -62,3 +78,5 @@ scoped_ctrl_c::~scoped_ctrl_c() {
         }
     }
 }
+
+#endif // SINGLE_THREAD

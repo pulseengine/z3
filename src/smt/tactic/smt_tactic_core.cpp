@@ -32,7 +32,7 @@ Notes:
 #include "solver/mus.h"
 #include "solver/parallel_tactical.h"
 #include "solver/parallel_params.hpp"
-#include <mutex>
+#include "util/mutex.h"
 
 typedef obj_map<expr, expr *> expr2expr_map;
 
@@ -49,7 +49,7 @@ class smt_tactic : public tactic {
     progress_callback*           m_callback = nullptr;
     bool                         m_candidate_models = false;
     bool                         m_fail_if_inconclusive = false;
-    mutable std::mutex           m_mutex;
+    mutable mutex                m_mutex;
 
 public:
     smt_tactic(ast_manager& m, params_ref const & p):
@@ -103,7 +103,7 @@ public:
 
     void collect_statistics(statistics & st) const override {
         if (m_ctx.load()) {
-            std::scoped_lock lock(m_mutex);
+            lock_guard lock(m_mutex);
             if (m_ctx.load()) {
                 m_ctx.load()->collect_statistics(st); // ctx is still running...
                 return;
@@ -148,7 +148,7 @@ public:
         ~scoped_init_ctx() {
             smt::kernel* d = nullptr;
             {
-                std::scoped_lock lock(m_owner.m_mutex);
+                lock_guard lock(m_owner.m_mutex);
                 d = m_owner.m_ctx.load();
                 m_owner.m_ctx = nullptr;
                 m_owner.m_user_ctx = nullptr;

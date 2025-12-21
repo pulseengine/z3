@@ -92,9 +92,11 @@ namespace sls {
                 add_shared_term(t);
         }
 
+#ifndef SINGLE_THREAD
         if (ctx.parallel_mode())
             m_thread = std::thread([this]() { run(); });
         else
+#endif
             m_completed = true;
     }
 
@@ -134,10 +136,12 @@ namespace sls {
             return;
         bool canceled = !m_completed;
         IF_VERBOSE(3, verbose_stream() << "finalize\n");
-        if (!m_completed) 
-            d->rlimit().cancel();  
+        if (!m_completed)
+            d->rlimit().cancel();
+#ifndef SINGLE_THREAD
         if (m_thread.joinable())
             m_thread.join();
+#endif
         SASSERT(m_completed);
         mdl = nullptr;
         m_ddfw->collect_statistics(st);
@@ -202,7 +206,7 @@ namespace sls {
     void smt_plugin::add_unit(sat::literal lit) {
         if (!is_shared(lit))
             return;
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard lock(m_mutex);
         m_units.push_back(lit);
         m_has_units = true;        
     }
@@ -213,7 +217,7 @@ namespace sls {
         m_has_new_sat_phase = true;
         IF_VERBOSE(3, verbose_stream() << "new SMT -> SLS phase\n");
         ctx.set_has_new_best_phase(false);
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard lock(m_mutex);
         for (auto v : m_shared_bool_vars) 
             m_sat_phase[v] = ctx.get_best_phase(v);
     }
@@ -221,19 +225,19 @@ namespace sls {
     bool smt_plugin::export_to_sls() {    
         bool updated = false;
         if (m_has_units) {            
-            std::lock_guard<std::mutex> lock(m_mutex);
+            lock_guard lock(m_mutex);
             smt_units_to_sls();
             m_has_units = false;
             updated = true;
         }
         if (m_has_new_sat_phase) {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            lock_guard lock(m_mutex);
             export_phase_to_sls();
             m_has_new_sat_phase = false;
             updated = true;
         }
         if (m_has_new_smt_values) {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            lock_guard lock(m_mutex);
             export_values_to_sls();
             m_has_new_smt_values = false;
             updated = true;
@@ -281,7 +285,7 @@ namespace sls {
     void smt_plugin::smt_values_to_sls() {
 
         if (true || ctx.parallel_mode()) {
-            std::scoped_lock lock(m_mutex);
+            lock_guard lock(m_mutex);
             m_sync_var_values.reset();
             for (auto const& [t, t_sync] : m_smt2sync_uninterp) {
                 expr_ref val_t(m);
@@ -359,7 +363,7 @@ namespace sls {
     }
 
     void smt_plugin::export_phase_from_sls() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard lock(m_mutex);
         for (auto v : m_shared_bool_vars) {
             auto w = m_smt_bool_var2sls_bool_var[v];
             m_rewards[v] = m_ddfw->get_reward_avg(w);
@@ -372,7 +376,7 @@ namespace sls {
 
     void smt_plugin::export_values_from_sls() {
         IF_VERBOSE(3, verbose_stream() << "export values from sls\n");
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard lock(m_mutex);
         for (auto const& [t, t_sync] : m_sls2sync_uninterp) {
             expr_ref val_t = m_context.get_value(t);
             auto sync_val = m_sls2sync_tr(val_t.get());
@@ -384,12 +388,12 @@ namespace sls {
     void smt_plugin::import_from_sls() {
         export_activity_to_smt();
         if (m_has_new_sls_values) {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            lock_guard lock(m_mutex);
             sls_values_to_smt();
             m_has_new_sls_values = false;
         }
         if (m_has_new_sls_phase) {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            lock_guard lock(m_mutex);
             sls_phase_to_smt();
             m_has_new_sls_phase = false;
         }
