@@ -151,6 +151,65 @@ void __cxa_deleted_virtual() {
     abort();
 }
 
+// ============================================================================
+// C++ new/delete operators
+// These are normally provided by libc++abi but may be missing in WASI
+// ============================================================================
+
+// operator new(size_t) - _Znwm
+void* _Znwm(size_t size) {
+    void* ptr = malloc(size ? size : 1);
+    if (!ptr) {
+        abort(); // In WASI, we abort on allocation failure
+    }
+    return ptr;
+}
+
+// operator new[](size_t) - _Znam
+void* _Znam(size_t size) {
+    return _Znwm(size);
+}
+
+// operator delete(void*) - _ZdlPv
+void _ZdlPv(void* ptr) {
+    free(ptr);
+}
+
+// operator delete[](void*) - _ZdaPv
+void _ZdaPv(void* ptr) {
+    free(ptr);
+}
+
+// operator delete(void*, size_t) - _ZdlPvm (sized delete)
+void _ZdlPvm(void* ptr, size_t) {
+    free(ptr);
+}
+
+// operator delete[](void*, size_t) - _ZdaPvm (sized delete)
+void _ZdaPvm(void* ptr, size_t) {
+    free(ptr);
+}
+
+// operator new(size_t, std::nothrow_t const&) - _ZnwmRKSt9nothrow_t
+void* _ZnwmRKSt9nothrow_t(size_t size, void*) {
+    return malloc(size ? size : 1);
+}
+
+// operator new[](size_t, std::nothrow_t const&) - _ZnamRKSt9nothrow_t
+void* _ZnamRKSt9nothrow_t(size_t size, void*) {
+    return malloc(size ? size : 1);
+}
+
+// operator delete(void*, std::nothrow_t const&) - _ZdlPvRKSt9nothrow_t
+void _ZdlPvRKSt9nothrow_t(void* ptr, void*) {
+    free(ptr);
+}
+
+// operator delete[](void*, std::nothrow_t const&) - _ZdaPvRKSt9nothrow_t
+void _ZdaPvRKSt9nothrow_t(void* ptr, void*) {
+    free(ptr);
+}
+
 }
 
 #endif // __wasi__
