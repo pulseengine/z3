@@ -60,6 +60,7 @@ z3_add_component(util
     trace.cpp
     util.cpp
     warning.cpp
+    wasi_stubs.cpp
     z3_exception.cpp
     zstring.cpp
   EXTRA_REGISTER_MODULE_HEADERS
