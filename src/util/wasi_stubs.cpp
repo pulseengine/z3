@@ -1,33 +1,45 @@
-// Stubs for libc++ iostream functions missing in WASI
+// Stubs for libc++ iostream and exception functions missing in WASI
 // These are no-ops since Z3's iostream usage is primarily for debug output
 //
 // The symbols are provided with their mangled names because the class
 // definitions already exist in libc++ headers - we just need implementations.
+//
+// IMPORTANT: Return types must match C++ ABI expectations:
+// - Destructors and many methods return `this` for chaining
+// - getloc() uses an out-parameter pattern
 
 #ifdef __wasi__
 
 #include <cstddef>
+#include <cstdlib>
 
 extern "C" {
 
+// ============================================================================
+// iostream stubs
+// ============================================================================
+
 // std::basic_ostream<char, std::char_traits<char>>::flush()
-void _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE5flushEv(void* self) {
-    // no-op flush - WASI handles buffering automatically
+// Returns this for chaining
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE5flushEv(void* self) {
+    return self;
 }
 
 // std::basic_ostream<char, std::char_traits<char>>::sentry::sentry(basic_ostream&)
-void _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryC1ERS3_(void* self, void* stream) {
-    // no-op sentry constructor
+// Returns this
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryC1ERS3_(void* self, void* stream) {
+    return self;
 }
 
 // std::basic_ostream<char, std::char_traits<char>>::sentry::~sentry()
-void _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryD1Ev(void* self) {
-    // no-op sentry destructor
+// Returns this
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryD1Ev(void* self) {
+    return self;
 }
 
 // std::basic_ostream<char, std::char_traits<char>>::operator<<(unsigned int)
 void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEElsEj(void* self, unsigned int val) {
-    return self; // return self for chaining
+    return self;
 }
 
 // std::locale::use_facet(std::locale::id const&)
@@ -36,14 +48,18 @@ void* _ZNKSt3__26locale9use_facetERNS0_2idE(void* self, void* id) {
 }
 
 // std::ios_base::getloc() const
-void* _ZNKSt3__28ios_base6getlocEv(void* self) {
-    static char dummy_locale[64] = {0};
-    return dummy_locale;
+// Uses out-parameter: (this, result_ptr) -> void
+void _ZNKSt3__28ios_base6getlocEv(void* self, void* result) {
+    // Zero-initialize the result locale
+    for (int i = 0; i < 64; i++) {
+        ((char*)result)[i] = 0;
+    }
 }
 
 // std::locale::~locale()
-void _ZNSt3__26localeD1Ev(void* self) {
-    // no-op destructor
+// Returns this
+void* _ZNSt3__26localeD1Ev(void* self) {
+    return self;
 }
 
 // std::ios_base::clear(unsigned int)
@@ -53,6 +69,87 @@ void _ZNSt3__28ios_base5clearEj(void* self, unsigned int state) {
 
 // std::ctype<char>::id - static member variable
 char _ZNSt3__25ctypeIcE2idE = 0;
+
+// ============================================================================
+// C++ exception handling stubs (libcxxabi)
+// Z3 uses exceptions but in WASI single-threaded mode, we abort on throw
+// ============================================================================
+
+// Allocate memory for exception object
+void* __cxa_allocate_exception(size_t thrown_size) {
+    // Allocate space for exception object
+    void* ptr = malloc(thrown_size);
+    if (!ptr) {
+        abort();
+    }
+    return ptr;
+}
+
+// Free exception memory
+void __cxa_free_exception(void* thrown_exception) {
+    free(thrown_exception);
+}
+
+// Throw an exception - in WASI we abort
+[[noreturn]]
+void __cxa_throw(void* thrown_exception, void* tinfo, void (*dest)(void*)) {
+    // In single-threaded WASI, we can't propagate exceptions
+    // Just abort - this matches Z3_SINGLE_THREADED behavior
+    abort();
+}
+
+// Begin catch - should never be called if we abort on throw
+void* __cxa_begin_catch(void* exception_object) {
+    abort();
+    return nullptr;
+}
+
+// End catch
+void __cxa_end_catch() {
+    // no-op
+}
+
+// Rethrow exception
+[[noreturn]]
+void __cxa_rethrow() {
+    abort();
+}
+
+// Get exception pointer
+void* __cxa_current_primary_exception() {
+    return nullptr;
+}
+
+// Exception type info comparison
+int __cxa_type_match(void* thrown_type, void* catch_type, void** thrown_ptr) {
+    return 0; // No match
+}
+
+// Guard for thread-safe initialization (single-threaded, no-op)
+int __cxa_guard_acquire(long long* guard_object) {
+    if (*guard_object) return 0;
+    return 1;
+}
+
+void __cxa_guard_release(long long* guard_object) {
+    *guard_object = 1;
+}
+
+void __cxa_guard_abort(long long* guard_object) {
+    // no-op
+}
+
+// Pure virtual call handler
+[[noreturn]]
+void __cxa_pure_virtual() {
+    abort();
+}
+
+// Deleted virtual call handler
+[[noreturn]]
+void __cxa_deleted_virtual() {
+    abort();
+}
 
 }
 
