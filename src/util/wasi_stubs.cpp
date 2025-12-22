@@ -210,6 +210,71 @@ void _ZdaPvRKSt9nothrow_t(void* ptr, void*) {
     free(ptr);
 }
 
+// ============================================================================
+// std::exception and related classes
+// These are virtual classes used by Z3's exception hierarchy
+// ============================================================================
+
+// std::exception::~exception() - _ZNSt9exceptionD2Ev
+void _ZNSt9exceptionD2Ev(void* self) {
+    // no-op destructor
+}
+
+// std::exception::~exception() - _ZNSt9exceptionD1Ev (complete object destructor)
+void _ZNSt9exceptionD1Ev(void* self) {
+    // no-op destructor
+}
+
+// std::exception::~exception() - _ZNSt9exceptionD0Ev (deleting destructor)
+void _ZNSt9exceptionD0Ev(void* self) {
+    free(self);
+}
+
+// std::exception::what() const - _ZNKSt9exception4whatEv
+const char* _ZNKSt9exception4whatEv(void* self) {
+    return "std::exception";
+}
+
+// std::bad_alloc::~bad_alloc() - _ZNSt9bad_allocD2Ev
+void _ZNSt9bad_allocD2Ev(void* self) {
+    // no-op destructor
+}
+
+// std::bad_alloc::~bad_alloc() - _ZNSt9bad_allocD1Ev
+void _ZNSt9bad_allocD1Ev(void* self) {
+    // no-op destructor
+}
+
+// std::bad_alloc::~bad_alloc() - _ZNSt9bad_allocD0Ev (deleting destructor)
+void _ZNSt9bad_allocD0Ev(void* self) {
+    free(self);
+}
+
+// std::bad_alloc::what() const - _ZNKSt9bad_alloc4whatEv
+const char* _ZNKSt9bad_alloc4whatEv(void* self) {
+    return "std::bad_alloc";
+}
+
+// std::length_error::~length_error() - various destructor variants
+void _ZNSt12length_errorD2Ev(void* self) {}
+void _ZNSt12length_errorD1Ev(void* self) {}
+void _ZNSt12length_errorD0Ev(void* self) { free(self); }
+
+// std::out_of_range::~out_of_range()
+void _ZNSt12out_of_rangeD2Ev(void* self) {}
+void _ZNSt12out_of_rangeD1Ev(void* self) {}
+void _ZNSt12out_of_rangeD0Ev(void* self) { free(self); }
+
+// std::logic_error::~logic_error()
+void _ZNSt11logic_errorD2Ev(void* self) {}
+void _ZNSt11logic_errorD1Ev(void* self) {}
+void _ZNSt11logic_errorD0Ev(void* self) { free(self); }
+
+// std::runtime_error::~runtime_error()
+void _ZNSt13runtime_errorD2Ev(void* self) {}
+void _ZNSt13runtime_errorD1Ev(void* self) {}
+void _ZNSt13runtime_errorD0Ev(void* self) { free(self); }
+
 }
 
 #endif // __wasi__
