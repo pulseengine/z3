@@ -63,20 +63,23 @@ void* _ZNSt3__28ios_baseD2Ev(void* self) { return self; }
 void* _ZNSt3__28ios_baseD1Ev(void* self) { return self; }
 void* _ZNSt3__28ios_baseD0Ev(void* self) { free(self); return self; }
 
-// std::basic_ostream destructor
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+// std::basic_ostream destructor (with virtual base offset parameter)
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED2Ev(void* self, int vbase_offset) { return self; }
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED1Ev(void* self, int vbase_offset) { return self; }
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED0Ev(void* self, int vbase_offset) { free(self); return self; }
 
-// std::basic_istream destructor
-void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+// std::basic_istream destructor (with virtual base offset parameter)
+void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED2Ev(void* self, int vbase_offset) { return self; }
+void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED1Ev(void* self, int vbase_offset) { return self; }
+void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED0Ev(void* self, int vbase_offset) { free(self); return self; }
 
-// std::basic_iostream destructor
-void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+// std::basic_iostream destructor (with virtual base offset parameter)
+void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED2Ev(void* self, int vbase_offset) { return self; }
+void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED1Ev(void* self, int vbase_offset) { return self; }
+void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED0Ev(void* self, int vbase_offset) { free(self); return self; }
+
+// std::ios_base::init(void*)
+void _ZNSt3__28ios_base4initEPv(void* self, void* sb) {}
 
 // std::basic_stringbuf destructor
 void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
