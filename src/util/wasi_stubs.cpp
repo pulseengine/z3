@@ -48,7 +48,9 @@ void _ZNSt3__28ios_base5clearEj(void* self, unsigned int state) {}
 
 char _ZNSt3__25ctypeIcE2idE = 0;
 
-// std::basic_streambuf destructor
+// std::basic_streambuf constructor and destructor
+void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEEC2Ev(void* self) { return self; }
+void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEEC1Ev(void* self) { return self; }
 void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
 void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
 void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
