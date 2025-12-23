@@ -48,6 +48,51 @@ void _ZNSt3__28ios_base5clearEj(void* self, unsigned int state) {}
 
 char _ZNSt3__25ctypeIcE2idE = 0;
 
+// std::basic_streambuf destructor
+void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::basic_ios destructor
+void* _ZNSt3__29basic_iosIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__29basic_iosIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__29basic_iosIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::ios_base destructor
+void* _ZNSt3__28ios_baseD2Ev(void* self) { return self; }
+void* _ZNSt3__28ios_baseD1Ev(void* self) { return self; }
+void* _ZNSt3__28ios_baseD0Ev(void* self) { free(self); return self; }
+
+// std::basic_ostream destructor
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::basic_istream destructor
+void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::basic_iostream destructor
+void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::basic_stringbuf destructor
+void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::basic_ostringstream destructor
+void* _ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED0Ev(void* self) { free(self); return self; }
+
+// std::basic_istringstream destructor
+void* _ZNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
+void* _ZNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev(void* self) { return self; }
+void* _ZNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED0Ev(void* self) { free(self); return self; }
+
 // ============================================================================
 // C++ exception handling stubs
 // WASI libc++abi doesn't include these - we abort on throw
