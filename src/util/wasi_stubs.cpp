@@ -16,12 +16,10 @@ extern "C" {
 // These functions are missing from WASI libc++ but Z3 references them
 // ============================================================================
 
-// std::basic_ostream<char, std::char_traits<char>>::flush()
 void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE5flushEv(void* self) {
     return self;
 }
 
-// std::basic_ostream sentry constructor/destructor
 void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryC1ERS3_(void* self, void* stream) {
     return self;
 }
@@ -30,12 +28,10 @@ void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryD1Ev(void* self) {
     return self;
 }
 
-// std::basic_ostream::operator<<(unsigned int)
 void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEElsEj(void* self, unsigned int val) {
     return self;
 }
 
-// std::locale functions
 void* _ZNKSt3__26locale9use_facetERNS0_2idE(void* self, void* id) {
     return nullptr;
 }
@@ -68,7 +64,6 @@ void __cxa_free_exception(void* thrown_exception) {
 }
 
 [[noreturn]] void __cxa_throw(void* thrown_exception, void* tinfo, void (*dest)(void*)) {
-    // In WASI, we can't propagate exceptions - abort
     abort();
 }
 
@@ -119,33 +114,62 @@ void _ZdaPvRKSt9nothrow_t(void* ptr, void*) { free(ptr); }
 
 // ============================================================================
 // std::exception class stubs
+// Destructors return this pointer for C++ ABI compatibility
 // ============================================================================
 
-void _ZNSt9exceptionD2Ev(void* self) {}
-void _ZNSt9exceptionD1Ev(void* self) {}
-void _ZNSt9exceptionD0Ev(void* self) { free(self); }
+// std::exception
+void* _ZNSt9exceptionD2Ev(void* self) { return self; }
+void* _ZNSt9exceptionD1Ev(void* self) { return self; }
+void* _ZNSt9exceptionD0Ev(void* self) { free(self); return self; }
 const char* _ZNKSt9exception4whatEv(void* self) { return "std::exception"; }
 
-void _ZNSt9bad_allocD2Ev(void* self) {}
-void _ZNSt9bad_allocD1Ev(void* self) {}
-void _ZNSt9bad_allocD0Ev(void* self) { free(self); }
+// std::bad_alloc
+void* _ZNSt9bad_allocD2Ev(void* self) { return self; }
+void* _ZNSt9bad_allocD1Ev(void* self) { return self; }
+void* _ZNSt9bad_allocD0Ev(void* self) { free(self); return self; }
 const char* _ZNKSt9bad_alloc4whatEv(void* self) { return "std::bad_alloc"; }
 
-void _ZNSt12length_errorD2Ev(void* self) {}
-void _ZNSt12length_errorD1Ev(void* self) {}
-void _ZNSt12length_errorD0Ev(void* self) { free(self); }
+// std::logic_error - constructors and destructors
+void* _ZNSt11logic_errorC2EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt11logic_errorC1EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt11logic_errorD2Ev(void* self) { return self; }
+void* _ZNSt11logic_errorD1Ev(void* self) { return self; }
+void* _ZNSt11logic_errorD0Ev(void* self) { free(self); return self; }
 
-void _ZNSt12out_of_rangeD2Ev(void* self) {}
-void _ZNSt12out_of_rangeD1Ev(void* self) {}
-void _ZNSt12out_of_rangeD0Ev(void* self) { free(self); }
+// std::length_error
+void* _ZNSt12length_errorC2EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt12length_errorC1EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt12length_errorD2Ev(void* self) { return self; }
+void* _ZNSt12length_errorD1Ev(void* self) { return self; }
+void* _ZNSt12length_errorD0Ev(void* self) { free(self); return self; }
 
-void _ZNSt11logic_errorD2Ev(void* self) {}
-void _ZNSt11logic_errorD1Ev(void* self) {}
-void _ZNSt11logic_errorD0Ev(void* self) { free(self); }
+// std::out_of_range
+void* _ZNSt12out_of_rangeC2EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt12out_of_rangeC1EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt12out_of_rangeD2Ev(void* self) { return self; }
+void* _ZNSt12out_of_rangeD1Ev(void* self) { return self; }
+void* _ZNSt12out_of_rangeD0Ev(void* self) { free(self); return self; }
 
-void _ZNSt13runtime_errorD2Ev(void* self) {}
-void _ZNSt13runtime_errorD1Ev(void* self) {}
-void _ZNSt13runtime_errorD0Ev(void* self) { free(self); }
+// std::runtime_error
+void* _ZNSt13runtime_errorC2EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt13runtime_errorC1EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt13runtime_errorD2Ev(void* self) { return self; }
+void* _ZNSt13runtime_errorD1Ev(void* self) { return self; }
+void* _ZNSt13runtime_errorD0Ev(void* self) { free(self); return self; }
+
+// std::invalid_argument
+void* _ZNSt16invalid_argumentC2EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt16invalid_argumentC1EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt16invalid_argumentD2Ev(void* self) { return self; }
+void* _ZNSt16invalid_argumentD1Ev(void* self) { return self; }
+void* _ZNSt16invalid_argumentD0Ev(void* self) { free(self); return self; }
+
+// std::overflow_error
+void* _ZNSt14overflow_errorC2EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt14overflow_errorC1EPKc(void* self, const char* msg) { return self; }
+void* _ZNSt14overflow_errorD2Ev(void* self) { return self; }
+void* _ZNSt14overflow_errorD1Ev(void* self) { return self; }
+void* _ZNSt14overflow_errorD0Ev(void* self) { free(self); return self; }
 
 }
 
