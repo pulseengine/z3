@@ -1,8 +1,11 @@
-// Stubs for libc++ functions missing in WASI
-// These provide minimal implementations needed by Z3
+// Stubs for C++ runtime functions missing in WASI libc++
 //
-// WASI libc++abi is built without exception support, so we provide
-// stubs that abort on throw. This matches Z3_SINGLE_THREADED behavior.
+// libc++ provides iostream, chrono, locale - those are NOT stubbed here.
+// What's missing and stubbed here:
+// - Exception handling (__cxa_*) - libc++abi is built without exceptions
+// - new/delete operators - need explicit linking
+// - std::exception class hierarchy - for exception types
+// - RTTI (__dynamic_cast) - for polymorphic casts
 
 #ifdef __wasi__
 
@@ -10,93 +13,6 @@
 #include <cstdlib>
 
 extern "C" {
-
-// ============================================================================
-// iostream stubs
-// These functions are missing from WASI libc++ but Z3 references them
-// ============================================================================
-
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE5flushEv(void* self) {
-    return self;
-}
-
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryC1ERS3_(void* self, void* stream) {
-    return self;
-}
-
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEE6sentryD1Ev(void* self) {
-    return self;
-}
-
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEElsEj(void* self, unsigned int val) {
-    return self;
-}
-
-void* _ZNKSt3__26locale9use_facetERNS0_2idE(void* self, void* id) {
-    return nullptr;
-}
-
-void _ZNKSt3__28ios_base6getlocEv(void* self, void* result) {
-    for (int i = 0; i < 64; i++) ((char*)result)[i] = 0;
-}
-
-void* _ZNSt3__26localeD1Ev(void* self) {
-    return self;
-}
-
-void _ZNSt3__28ios_base5clearEj(void* self, unsigned int state) {}
-
-char _ZNSt3__25ctypeIcE2idE = 0;
-
-// std::basic_streambuf constructor and destructor
-void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEEC2Ev(void* self) { return self; }
-void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEEC1Ev(void* self) { return self; }
-void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__215basic_streambufIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
-
-// std::basic_ios destructor
-void* _ZNSt3__29basic_iosIcNS_11char_traitsIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__29basic_iosIcNS_11char_traitsIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__29basic_iosIcNS_11char_traitsIcEEED0Ev(void* self) { free(self); return self; }
-
-// std::ios_base destructor
-void* _ZNSt3__28ios_baseD2Ev(void* self) { return self; }
-void* _ZNSt3__28ios_baseD1Ev(void* self) { return self; }
-void* _ZNSt3__28ios_baseD0Ev(void* self) { free(self); return self; }
-
-// std::basic_ostream destructor (with virtual base offset parameter)
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED2Ev(void* self, int vbase_offset) { return self; }
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED1Ev(void* self, int vbase_offset) { return self; }
-void* _ZNSt3__213basic_ostreamIcNS_11char_traitsIcEEED0Ev(void* self, int vbase_offset) { free(self); return self; }
-
-// std::basic_istream destructor (with virtual base offset parameter)
-void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED2Ev(void* self, int vbase_offset) { return self; }
-void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED1Ev(void* self, int vbase_offset) { return self; }
-void* _ZNSt3__213basic_istreamIcNS_11char_traitsIcEEED0Ev(void* self, int vbase_offset) { free(self); return self; }
-
-// std::basic_iostream destructor (with virtual base offset parameter)
-void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED2Ev(void* self, int vbase_offset) { return self; }
-void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED1Ev(void* self, int vbase_offset) { return self; }
-void* _ZNSt3__214basic_iostreamIcNS_11char_traitsIcEEED0Ev(void* self, int vbase_offset) { free(self); return self; }
-
-// std::ios_base::init(void*)
-void _ZNSt3__28ios_base4initEPv(void* self, void* sb) {}
-
-// std::basic_stringbuf destructor
-void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEED0Ev(void* self) { free(self); return self; }
-
-// std::basic_ostringstream destructor
-void* _ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED0Ev(void* self) { free(self); return self; }
-
-// std::basic_istringstream destructor
-void* _ZNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED2Ev(void* self) { return self; }
-void* _ZNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED1Ev(void* self) { return self; }
-void* _ZNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEED0Ev(void* self) { free(self); return self; }
 
 // ============================================================================
 // C++ exception handling stubs
@@ -228,7 +144,6 @@ void* _ZNSt14overflow_errorD0Ev(void* self) { free(self); return self; }
 // dynamic_cast runtime support
 void* __dynamic_cast(void* src_ptr, void* src_type, void* dst_type, long offset) {
     // Simplified: just return src_ptr (no actual type checking)
-    // This is safe for Z3 since we abort on exceptions anyway
     return src_ptr;
 }
 
@@ -237,13 +152,12 @@ int __cxa_can_catch(void* thrown_type, void* catch_type, void** thrown_ptr) {
     return 0; // Can't catch anything
 }
 
-// typeid support - these return pointers to type_info objects
-// In practice Z3 only uses these for exception type matching which we abort on
-void* _ZTIPKc = nullptr;  // typeinfo for const char*
-void* _ZTIPc = nullptr;   // typeinfo for char*
-void* _ZTIi = nullptr;    // typeinfo for int
-void* _ZTIl = nullptr;    // typeinfo for long
-void* _ZTIv = nullptr;    // typeinfo for void
+// typeid support - pointers to type_info objects
+void* _ZTIPKc = nullptr;
+void* _ZTIPc = nullptr;
+void* _ZTIi = nullptr;
+void* _ZTIl = nullptr;
+void* _ZTIv = nullptr;
 
 }
 
