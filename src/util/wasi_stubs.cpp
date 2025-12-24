@@ -221,6 +221,30 @@ void* _ZNSt14overflow_errorD2Ev(void* self) { return self; }
 void* _ZNSt14overflow_errorD1Ev(void* self) { return self; }
 void* _ZNSt14overflow_errorD0Ev(void* self) { free(self); return self; }
 
+// ============================================================================
+// RTTI (Runtime Type Information) stubs
+// ============================================================================
+
+// dynamic_cast runtime support
+void* __dynamic_cast(void* src_ptr, void* src_type, void* dst_type, long offset) {
+    // Simplified: just return src_ptr (no actual type checking)
+    // This is safe for Z3 since we abort on exceptions anyway
+    return src_ptr;
+}
+
+// type_info comparison
+int __cxa_can_catch(void* thrown_type, void* catch_type, void** thrown_ptr) {
+    return 0; // Can't catch anything
+}
+
+// typeid support - these return pointers to type_info objects
+// In practice Z3 only uses these for exception type matching which we abort on
+void* _ZTIPKc = nullptr;  // typeinfo for const char*
+void* _ZTIPc = nullptr;   // typeinfo for char*
+void* _ZTIi = nullptr;    // typeinfo for int
+void* _ZTIl = nullptr;    // typeinfo for long
+void* _ZTIv = nullptr;    // typeinfo for void
+
 }
 
 #endif // __wasi__
