@@ -1,11 +1,11 @@
-// Stubs for C++ runtime functions missing in WASI libc++
+// Minimal stubs for C++ runtime functions missing in WASI
 //
-// libc++ provides iostream, chrono, locale - those are NOT stubbed here.
-// What's missing and stubbed here:
-// - Exception handling (__cxa_*) - libc++abi is built without exceptions
-// - new/delete operators - need explicit linking
-// - std::exception class hierarchy - for exception types
-// - RTTI (__dynamic_cast) - for polymorphic casts
+// libc++ provides: iostream, chrono, locale, exception class constructors
+// libc++abi provides: exception destructors, RTTI (__dynamic_cast), guard functions
+//
+// What's still missing and stubbed here:
+// - Exception handling (__cxa_throw, etc.) - libc++abi built without exceptions
+// - new/delete operators - libc++abi references but doesn't define them
 
 #ifdef __wasi__
 
@@ -50,6 +50,7 @@ void* __cxa_current_primary_exception() {
 
 // ============================================================================
 // C++ new/delete operators
+// libc++abi references these but doesn't define them
 // ============================================================================
 
 void* _Znwm(size_t size) {
@@ -77,87 +78,6 @@ void* _ZnamRKSt9nothrow_t(size_t size, void*) {
 
 void _ZdlPvRKSt9nothrow_t(void* ptr, void*) { free(ptr); }
 void _ZdaPvRKSt9nothrow_t(void* ptr, void*) { free(ptr); }
-
-// ============================================================================
-// std::exception class stubs
-// Destructors return this pointer for C++ ABI compatibility
-// ============================================================================
-
-// std::exception
-void* _ZNSt9exceptionD2Ev(void* self) { return self; }
-void* _ZNSt9exceptionD1Ev(void* self) { return self; }
-void* _ZNSt9exceptionD0Ev(void* self) { free(self); return self; }
-const char* _ZNKSt9exception4whatEv(void* self) { return "std::exception"; }
-
-// std::bad_alloc
-void* _ZNSt9bad_allocD2Ev(void* self) { return self; }
-void* _ZNSt9bad_allocD1Ev(void* self) { return self; }
-void* _ZNSt9bad_allocD0Ev(void* self) { free(self); return self; }
-const char* _ZNKSt9bad_alloc4whatEv(void* self) { return "std::bad_alloc"; }
-
-// std::logic_error - constructors and destructors
-void* _ZNSt11logic_errorC2EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt11logic_errorC1EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt11logic_errorD2Ev(void* self) { return self; }
-void* _ZNSt11logic_errorD1Ev(void* self) { return self; }
-void* _ZNSt11logic_errorD0Ev(void* self) { free(self); return self; }
-
-// std::length_error
-void* _ZNSt12length_errorC2EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt12length_errorC1EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt12length_errorD2Ev(void* self) { return self; }
-void* _ZNSt12length_errorD1Ev(void* self) { return self; }
-void* _ZNSt12length_errorD0Ev(void* self) { free(self); return self; }
-
-// std::out_of_range
-void* _ZNSt12out_of_rangeC2EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt12out_of_rangeC1EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt12out_of_rangeD2Ev(void* self) { return self; }
-void* _ZNSt12out_of_rangeD1Ev(void* self) { return self; }
-void* _ZNSt12out_of_rangeD0Ev(void* self) { free(self); return self; }
-
-// std::runtime_error
-void* _ZNSt13runtime_errorC2EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt13runtime_errorC1EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt13runtime_errorD2Ev(void* self) { return self; }
-void* _ZNSt13runtime_errorD1Ev(void* self) { return self; }
-void* _ZNSt13runtime_errorD0Ev(void* self) { free(self); return self; }
-
-// std::invalid_argument
-void* _ZNSt16invalid_argumentC2EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt16invalid_argumentC1EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt16invalid_argumentD2Ev(void* self) { return self; }
-void* _ZNSt16invalid_argumentD1Ev(void* self) { return self; }
-void* _ZNSt16invalid_argumentD0Ev(void* self) { free(self); return self; }
-
-// std::overflow_error
-void* _ZNSt14overflow_errorC2EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt14overflow_errorC1EPKc(void* self, const char* msg) { return self; }
-void* _ZNSt14overflow_errorD2Ev(void* self) { return self; }
-void* _ZNSt14overflow_errorD1Ev(void* self) { return self; }
-void* _ZNSt14overflow_errorD0Ev(void* self) { free(self); return self; }
-
-// ============================================================================
-// RTTI (Runtime Type Information) stubs
-// ============================================================================
-
-// dynamic_cast runtime support
-void* __dynamic_cast(void* src_ptr, void* src_type, void* dst_type, long offset) {
-    // Simplified: just return src_ptr (no actual type checking)
-    return src_ptr;
-}
-
-// type_info comparison
-int __cxa_can_catch(void* thrown_type, void* catch_type, void** thrown_ptr) {
-    return 0; // Can't catch anything
-}
-
-// typeid support - pointers to type_info objects
-void* _ZTIPKc = nullptr;
-void* _ZTIPc = nullptr;
-void* _ZTIi = nullptr;
-void* _ZTIl = nullptr;
-void* _ZTIv = nullptr;
 
 }
 
