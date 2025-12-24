@@ -44,9 +44,7 @@ void __cxa_end_catch() {}
     abort();
 }
 
-void* __cxa_current_primary_exception() {
-    return nullptr;
-}
+// Note: __cxa_current_primary_exception is provided by libc++abi
 
 // ============================================================================
 // C++ new/delete operators
